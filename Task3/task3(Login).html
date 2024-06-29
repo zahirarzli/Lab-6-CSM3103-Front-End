@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" 
+    integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"></script>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            width: 100vw;
+            margin: 0px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="mb-5">
+        <h3 class="mb-3">Login</h3> 
+        <input type="text" placeholder="Username" id="userInp" class="form-control mb-3">
+        <input type="password" placeholder="Password" id="passInp" class="form-control mb-3">
+        <div class="custom-control custom-switch mb-3">
+            <input type="checkbox" class="custom-control-input" id="customSwitch1">
+            <label class="custom-control-label" for="customSwitch1">Keep me Logged In</label>
+          </div>
+        <button type="button" id="sub_btn" class="btn w-100 btn-outline-primary mb-3">Sign In</button>
+        <a href="Task3 (Register).html" class="badge badge-secondary py-1 w-100">Want To Create A New Account?</a>
+    </div>
+
+    <script type="module">
+        import { initializeApp, getAnalytics } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-app.js";
+        import { getDatabase, set, ref } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-analytics.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAIRwobf1tTLK1EX-pn4-4tZUcvZ4VuWFI",
+            authDomain: "task1-c5b5e.firebaseapp.com",
+            databaseURL: "https://task1-c5b5e-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "task1-c5b5e",
+            storageBucket: "task1-c5b5e.appspot.com",
+            messagingSenderId: "178002704419",
+            appId: "1:178002704419:web:3f4d36711b9032581c9996",
+            measurementId: "G-30KL5HQ1RF"
+            };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        const username = document.getElementById('userInp');
+        const pass = document.getElementById('passInp');
+        const submit = document.getElementById('sub_btn');
+
+        // Authentication process
+        function authenticateUser() {
+            const dbRef = ref(db);
+            get(child(dbRef, "users/" + username.value)).then((snapshot) => {
+                if (snapshot.exists()) {
+                    let dbpass = snapshot.val().pass;
+                    if (dbpass === pass.value) {
+                        login(snapshot.val());
+                    } else {
+                        alert("Incorrect password");
+                    }
+                } else {
+                    alert("User does not exist");
+                }
+            }).catch((error) => {
+                alert("Error: " + error.message);
+            });
+        }
+
+        // Login process
+        function login(user) {
+            let keepLoggedIn = document.getElementById('customSwitch1').checked;
+            if (!keepLoggedIn) {
+                sessionStorage.setItem('user', JSON.stringify(user));
+                window.location = "Task3 (Landing).html";
+            } else {
+                localStorage.setItem('user', JSON.stringify(user));
+                window.location = "Task3 (Landing).html";
+            }
+        }
+
+        // Assign the event
+        submit.addEventListener('click', authenticateUser);
+    </script>
+</body>
+</html>

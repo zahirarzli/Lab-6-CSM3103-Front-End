@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Read, Write, Update, Delete Data v9.0.x.x</title>
+    <style>
+        label {
+            display: inline-block;
+            width: 80px;
+        }
+        input, select {
+            width: 120px;
+        }
+    </style>
+</head>
+<body>
+    <label>Name</label><input id="Namebox" type="text"><br><br>
+    <label>RollNo</label><input id="Rollbox" type="text"><br><br>
+    <label>Section</label><input id="Secbox" type="text"><br><br>
+    <label>Gender</label>
+    <select id="Genbox">
+        <option value="Male">Male</option>
+        <option value="Female">Female</option>
+    </select>
+    <br><br>
+    <hr>
+    <button id="Insbtn">INSERT</button>
+    <button id="Selbtn">SELECT</button>
+    <button id="Updbtn">UPDATE</button>
+    <button id="Delbtn">DELETE</button>
+
+    <!--------IMPORTS + CONFIGURATION------->
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
+        // TODO: Add SDKs for Firebase products that you want to use
+        // https://firebase.google.com/docs/web/setup#available-libraries
+      
+        // Your web app's Firebase configuration
+        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+        const firebaseConfig = {
+          apiKey: "AIzaSyAIRwobf1tTLK1EX-pn4-4tZUcvZ4VuWFI",
+          authDomain: "task1-c5b5e.firebaseapp.com",
+          databaseURL: "https://task1-c5b5e-default-rtdb.asia-southeast1.firebasedatabase.app",
+          projectId: "task1-c5b5e",
+          storageBucket: "task1-c5b5e.appspot.com",
+          messagingSenderId: "178002704419",
+          appId: "1:178002704419:web:3f4d36711b9032581c9996",
+          measurementId: "G-30KL5HQ1RF"
+        };
+      
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+
+
+        //-------------references----------
+        var namebox = document.getElementById("Namebox");
+        var rollbox = document.getElementById("Rollbox");
+        var secbox = document.getElementById("Secbox");
+        var genbox = document.getElementById("Genbox");
+
+        var insBtn = document.getElementById("Insbtn");
+        var selBtn = document.getElementById("Selbtn");
+        var updBtn = document.getElementById("Updbtn");
+        var delBtn = document.getElementById("Delbtn");
+
+        //insert data function
+        function InsertData() { 
+
+        set(ref(db, "TheStudents/" + rollbox.value), {
+            NameofStd: NameT.value,
+            RollNo: Number(RollT.value),
+            Section: SecT.value,
+            Gender: GenT.value
+        })
+        .then(() => {
+            alert("Data stored successfully!");
+        })
+        .catch((error) => {
+            alert("Unsuccessful, error: " + error);
+           });
+                } 
+
+        //select data function
+        function SelectData(){
+            const dbref = ref(db);
+
+            get(child(dbref, "TheStudents/" + rollbox.value)).then((snapshot) => {
+                if (snapshot.exists()) {
+                    namebox.value = snapshot.val().NameofStd;
+                    secbox.value = snapshot.val().Section;
+                    genbox.value = snapshot.val().Gender;
+                } else {
+                    alert("No data found");
+                }
+            })
+            .catch((error) => {
+                alert("Unsuccessful, error: " + error);
+            });
+        }
+
+        //update data function
+        function UpdateData(){
+            update(ref(db, "TheStudents/" + rollbox.value), {
+                NameofStd: namebox.value,
+                Section: secbox.value,
+                Gender: genbox.value
+            })
+            .then(() => {
+                alert("Data updated successfully!");
+            })
+            .catch((error) => {
+                alert("Unsuccessful, error: " + error);
+            });
+        }
+
+        //delete data function
+        function DeleteData(){
+            remove(ref(db, "TheStudents/" + rollbox.value))
+            .then(() => {
+                alert("Data removed successfully!");
+            })
+            .catch((error) => {
+                alert("Unsuccessful, error: " + error);
+            });
+        }
+
+        // Assign events to buttons
+        insBtn.addEventListener('click', InsertData);
+        selBtn.addEventListener('click', SelectData);
+        updBtn.addEventListener('click', UpdateData);
+        delBtn.addEventListener('click', DeleteData);
+    </script>
+</body>
+</html>

@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>All Firebase v9.0 Data in Table</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+</head>
+
+<body>
+    <div class="container mt-3">
+        <table class="table table-dark">
+            <thead>
+                <tr>
+                    <th>Sno</th>
+                    <th>Name</th>
+                    <th>Roll no</th>
+                    <th>Section</th>
+                    <th>Gender</th>
+                </tr>
+            </thead>
+            <tbody id="tbody1"></tbody>
+        </table>
+    </div>
+
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
+        // TODO: Add SDKs for Firebase products that you want to use
+        // https://firebase.google.com/docs/web/setup#available-libraries
+      
+        // Your web app's Firebase configuration
+        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+        const firebaseConfig = {
+          apiKey: "AIzaSyAIRwobf1tTLK1EX-pn4-4tZUcvZ4VuWFI",
+          authDomain: "task1-c5b5e.firebaseapp.com",
+          databaseURL: "https://task1-c5b5e-default-rtdb.asia-southeast1.firebasedatabase.app",
+          projectId: "task1-c5b5e",
+          storageBucket: "task1-c5b5e.appspot.com",
+          messagingSenderId: "178002704419",
+          appId: "1:178002704419:web:3f4d36711b9032581c9996",
+          measurementId: "G-30KL5HQ1RF"
+        };
+      
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+
+        // Get reference to the table body
+        let stdNo = 0;
+        const tbody = document.getElementById('tbody1');
+
+        // Function to add a row to the table
+        function AddItemToTable(name, roll, sec, gen) {
+            let trow = document.createElement("tr");
+            let td1 = document.createElement('td');
+            let td2 = document.createElement('td');
+            let td3 = document.createElement('td');
+            let td4 = document.createElement('td');
+            let td5 = document.createElement('td');
+
+            td1.innerHTML = ++stdNo;
+            td2.innerHTML = name;
+            td3.innerHTML = roll;
+            td4.innerHTML = sec;
+            td5.innerHTML = gen;
+
+            trow.appendChild(td1);
+            trow.appendChild(td2);
+            trow.appendChild(td3);
+            trow.appendChild(td4);
+            trow.appendChild(td5);
+
+            tbody.appendChild(trow);
+        }
+
+        // Function to add all items to the table
+        function AddAllItemToTable(TheStudent) {
+            stdNo = 0;
+            tbody.innerHTML = "";
+            TheStudent.forEach(element => {
+                AddItemToTable(element.NameofStd, element.RollNo, element.Section, element.Gender);
+            });
+        }
+
+
+        // Function to fetch data in real-time from the database
+        function GetAllDataRealtime() {
+            const dbRef = ref(db, "TheStudents");
+
+            onValue(dbRef, (snapshot) => {
+                const students = [];
+                snapshot.forEach(childSnapshot => {
+                    console.log(childSnapshot.val()); // Add this line to see the data structure
+                    students.push(childSnapshot.val());
+                });
+                AddAllItemToTable(students);
+            });
+        }
+
+        // Fetch data when the window loads
+        window.onload = GetAllDataRealtime;
+    </script>
+
+</body>
+
+</html>
